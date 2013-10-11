@@ -5,6 +5,11 @@ require 'parallel_tests'
 module ParallelTests
   class CLI
     def run(argv)
+      if ENV['RICKY_PATCH'] == '1' # justin's good suggestion for isolating it with environment variable
+        puts "WARNING! Artificially appending an empty argument so parse_options! doesn't blow up in certain versions of ruby"
+        argv << ''
+      end
+
       options = parse_options!(argv)
 
       num_processes = ParallelTests.determine_number_of_processes(options[:count])
