@@ -8,7 +8,7 @@ module ParallelTests
       end
 
       def run_in_parallel(cmd, options={})
-        count = " -n #{options[:count]}" if options[:count]
+        count = " -n #{options[:count]}" unless options[:count].to_s.empty?
         executable = File.expand_path("../../../bin/parallel_test", __FILE__)
         command = "#{executable} --exec '#{cmd}'#{count}#{' --non-parallel' if options[:non_parallel]}"
         abort unless system(command)
@@ -30,8 +30,10 @@ module ParallelTests
         activate_pipefail = "set -o pipefail"
         remove_ignored_lines = %Q{(grep -v "#{ignore_regex}" || test 1)}
 
-        if system("#{activate_pipefail} 2>/dev/null && test 1")
-          "#{activate_pipefail} && (#{command}) | #{remove_ignored_lines}"
+        if File.executable?('/bin/bash') && system('/bin/bash', '-c', "#{activate_pipefail} 2>/dev/null && test 1")
+          # We need to shell escape single quotes (' becomes '"'"') because
+          # run_in_parallel wraps command in single quotes
+          %Q{/bin/bash -c '"'"'#{activate_pipefail} && (#{command}) | #{remove_ignored_lines}'"'"'}
         else
           command
         end
@@ -87,7 +89,7 @@ namespace :parallel do
       # there is no separate dump / load for schema_format :sql -> do it safe and slow
       args = args.to_hash.merge(:non_parallel => true) # normal merge returns nil
       taskname = Rake::Task.task_defined?('db:test:prepare') ? 'db:test:prepare' : 'app:db:test:prepare'
-      ParallelTests::Tasks.run_in_parallel("rake #{taskname} --trace", args)
+      ParallelTests::Tasks.run_in_parallel("rake #{taskname}", args)
     end
   end
 

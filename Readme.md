@@ -90,10 +90,12 @@ end
 Loggers
 ===================
 
-Even process runtimes
------------------
+Even test group run-times
+-------------------------
 
-Log test runtime to give each process the same runtime.
+Add the `RuntimeLogger` to log how long each test takes to run.
+This log file will be loaded on the next test run, and the tests will be grouped
+so that each process should finish around the same time.
 
 Rspec: Add to your `.rspec_parallel` (or `.rspec`) :
 
@@ -172,6 +174,7 @@ Options are:
         --group-by [TYPE]            group tests by:
           found - order of finding files
           steps - number of cucumber steps
+          filesize - size of files on disk
           default - runtime or filesize
     -m, --multiply-processes [FLOAT] use given number as a multiplier of processes to run
     -s, --single [PATTERN]           Run all matching files in the same process
@@ -184,6 +187,7 @@ Options are:
         --no-symlinks                Do not traverse symbolic links to find test files
         --ignore-tags [PATTERN]      When counting steps ignore scenarios with tags that match this pattern
         --nice                       execute test commands with low priority.
+        --only-group [INTEGER]       Group the files, but only run the group specified here. Requires group-by filesize (will be set automatically if group-by is blank and only-group is specified)
     -v, --version                    Show Version
     -h, --help                       Show this.
 
@@ -211,7 +215,7 @@ TIPS
  - [RSpec] Instantly see failures (instead of just a red F) with [rspec-instafail](https://github.com/grosser/rspec-instafail)
  - [Bundler] if you have a `Gemfile` then `bundle exec` will be used to run tests
  - [Cucumber] add a `parallel: foo` profile to your `config/cucumber.yml` and it will be used to run parallel tests
- - [Cucumber] Pass in cucumber options by not giving the options an identifier ex: parallel:features[x,y,'cucumber_opts']
+ - [Cucumber] Pass in cucumber options by not giving the options an identifier ex: `rake parallel:features[,,'cucumber_opts']`
  - [Capybara setup](https://github.com/grosser/parallel_tests/wiki)
  - [Sphinx setup](https://github.com/grosser/parallel_tests/wiki)
  - [Capistrano setup](https://github.com/grosser/parallel_tests/wiki/Remotely-with-capistrano) let your tests run on a big box instead of your laptop
@@ -221,6 +225,7 @@ TIPS
  - [email_spec and/or action_mailer_cache_delivery](https://github.com/grosser/parallel_tests/wiki)
  - [Memcached] use different namespaces e.g. `config.cache_store = ..., :namespace => "test_#{ENV['TEST_ENV_NUMBER']}"`
  - [zeus-parallel_tests](https://github.com/sevos/zeus-parallel_tests)
+ - [Distributed parallel test (e.g. Travis Support)](https://github.com/grosser/parallel_tests/wiki/Distributed-Parallel-Tests-and-Travis-Support)
 
 TODO
 ====
@@ -288,6 +293,9 @@ inspired by [pivotal labs](http://pivotallabs.com/users/miked/blog/articles/849-
  - [Exoth](https://github.com/Exoth)
  - [sidfarkus](https://github.com/sidfarkus)
  - [Colin Harris](https://github.com/aberant)
+ - [Wataru MIYAGUNI](https://github.com/gongo)
+ - [Brandon Turner](https://github.com/blt04)
+ - [Matt Hodgson](https://github.com/mhodgson)
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>

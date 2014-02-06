@@ -19,7 +19,7 @@ module ParallelTests
         end
 
         def test_file_name
-          "feature"
+          @test_file_name || "feature"
         end
 
         def test_suffix
@@ -37,7 +37,7 @@ module ParallelTests
           sort_order = %w[scenario step failed undefined skipped pending passed]
 
           %w[scenario step].map do |group|
-            group_results = results.grep /^\d+ #{group}/
+            group_results = results.grep(/^\d+ #{group}/)
             next if group_results.empty?
 
             sums = sum_up_results(group_results)
@@ -67,8 +67,12 @@ module ParallelTests
         end
 
         def tests_in_groups(tests, num_groups, options={})
-          if options[:group_by] == :steps
-            Grouper.by_steps(find_tests(tests, options), num_groups, options)
+          if options[:group_by] == :scenarios
+            @test_file_name = "scenario"
+          end
+          method = "by_#{options[:group_by]}"
+          if Grouper.respond_to?(method)
+            Grouper.send(method, find_tests(tests, options), num_groups, options)
           else
             super
           end
@@ -85,14 +89,14 @@ module ParallelTests
 
         def determine_executable
           case
-            when File.exists?("bin/#{name}")
-              "bin/#{name}"
-            when ParallelTests.bundler_enabled?
-              "bundle exec #{name}"
-            when File.file?("script/#{name}")
-              "script/#{name}"
-            else
-              "#{name}"
+          when File.exists?("bin/#{name}")
+            "bin/#{name}"
+          when ParallelTests.bundler_enabled?
+            "bundle exec #{name}"
+          when File.file?("script/#{name}")
+            "script/#{name}"
+          else
+            "#{name}"
           end
         end
 
