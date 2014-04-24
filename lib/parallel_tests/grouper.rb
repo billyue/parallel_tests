@@ -64,7 +64,8 @@ module ParallelTests
 
       def group_features_by_size(items, groups_to_fill)
         items.each do |item, size|
-          size ||= 1
+          # set the default run time as average runtime 10 sec
+          size ||= 10
           smallest = smallest_group(groups_to_fill)
           add_to_group(smallest, item, size)
         end
