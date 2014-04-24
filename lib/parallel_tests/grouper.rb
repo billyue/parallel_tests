@@ -23,6 +23,11 @@ module ParallelTests
         groups_to_fill = (options[:isolate] ? groups[1..-1] : groups)
         group_features_by_size(items_to_group(items), groups_to_fill)
 
+        # DEBUG: output spec names and total runtime in each group
+        for group in groups
+          puts group
+        end
+
         groups.map!{|g| g[:items].sort }
       end
 
