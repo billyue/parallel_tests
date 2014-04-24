@@ -137,6 +137,7 @@ module ParallelTests
           # use recorded test runtime if we got enough data
           if lines.size * 1.5 > tests.size
             puts "Using recorded test runtime"
+            puts lines.size, tests.size
             times = Hash.new(1)
             lines.each do |line|
               test, time = line.split(":")
